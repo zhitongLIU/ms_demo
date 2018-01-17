@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:9.6-alpine'
+    environment:
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'password'
+    networks:
+      - api_stack
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+
+  api:
+    build: .
+    entrypoint: [bin/entry]
+    environment:
+      RAILS_ENV: 'production'
+      SECRET_KEY_BASE: bb7d444e7b1250747929168783332de43e6e6279b92e7cfcec7d2ea7027a0965742d1d60a0020ee8b0cfe602791d162c18b5f70f3418dbb40bce72e9b349cb3b
+    command: bundle exec rails server
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - api_stack
+
+volumes:
+  postgres: {}
+
+networks:
+  api_stack:

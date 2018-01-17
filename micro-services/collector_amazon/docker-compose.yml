@@ -1,0 +1,26 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+    networks:
+      - services_stack
+  collector-amazon:
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    build: .
+    depends_on:
+      - rabbitmq
+    networks:
+      - services_stack
+    volumes:
+      - ./S3:/S3
+
+
+networks:
+  services_stack:

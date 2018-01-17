@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:9.6-alpine'
+    environment:
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'password'
+    networks:
+      - services_stack
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+
+  supervisor:
+    build: .
+    environment:
+      DATABASE_HOST: postgres
+    depends_on:
+      - postgres
+    networks:
+      - services_stack
+
+volumes:
+  postgres: {}
+
+networks:
+  services_stack:

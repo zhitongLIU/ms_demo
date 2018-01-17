@@ -1,0 +1,92 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+    networks:
+      - services_stack
+  collector-amazon:
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    build: ./micro-services/collector_amazon
+    depends_on:
+      - rabbitmq
+    networks:
+      - services_stack
+    volumes:
+      - ./S3:/S3
+  collector-google:
+    build: ./micro-services/collector_google
+    ports:
+      - "4567:4567"
+    networks:
+      - services_stack
+    volumes:
+      - ./S3:/S3
+  etl:
+    build: ./micro-services/etl
+    ports:
+      - "6666:6666"
+    networks:
+      - services_stack
+    volumes:
+      - ./S3:/S3
+  sqs:
+    build: ./SQS
+    depends_on:
+      - etl
+    environment:
+      ETL_URL: http://etl:6666
+    networks:
+      - services_stack
+    volumes:
+      - ./S3:/S3
+  postgres:
+    image: 'postgres:9.6-alpine'
+    environment:
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'password'
+    networks:
+      - services_stack
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'postgres:/var/lib/postgresql/data'
+  api:
+    build: ./api
+    entrypoint: [bin/entry]
+    environment:
+      RAILS_ENV: 'production'
+      SECRET_KEY_BASE: bb7d444e7b1250747929168783332de43e6e6279b92e7cfcec7d2ea7027a0965742d1d60a0020ee8b0cfe602791d162c18b5f70f3418dbb40bce72e9b349cb3b
+    command: bundle exec rails server
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - services_stack
+  supervisor:
+    build: ./supervisor
+    depends_on:
+      - postgres
+      - rabbitmq
+      - collector-google
+      - collector-amazon
+    environment:
+      DATABASE_HOST: postgres
+      GOOGLE_COLLECTOR_URL: http://collector-google:4567
+      RABBITMQ_HOST: rabbitmq
+    command: ruby main.rb
+    networks:
+      - services_stack
+
+networks:
+  services_stack:
+
+volumes:
+  postgres: {}
