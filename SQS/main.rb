@@ -1,4 +1,5 @@
 require 'listen'
+require 'fileutils'
 require 'json'
 require 'net/http'
 
@@ -14,9 +15,19 @@ def send_sqs(file_name)
   http.request(req)
 end
 
+raw_data_dir = "#{Dir.pwd}/../S3/raw_data"
+unless Dir.exist?(raw_data_dir)
+  FileUtils.mkdir_p(raw_data_dir)
+end
+
+procced_data_dir = "#{Dir.pwd}/../S3/procced_data"
+unless Dir.exist?(procced_data_dir)
+  FileUtils.mkdir_p(procced_data_dir)
+end
+
 # this gem can listen to files change in a directory which can be used to fake
 # our SQS on AWS
-listener = Listen.to("#{Dir.pwd}/../S3/raw_data") do |modified, added, removed|
+listener = Listen.to(raw_data_dir) do |modified, added, removed|
   # puts "modified absolute path: #{modified}"
   puts "added absolute path: #{added}"
   # puts "removed absolute path: #{removed}"
