@@ -13,6 +13,7 @@ services:
   collector-amazon:
     environment:
       RABBITMQ_HOST: rabbitmq
+    image: zhitongliu/msdemo_collector-amazon
     build: ./micro-services/collector_amazon
     depends_on:
       - rabbitmq
@@ -21,6 +22,7 @@ services:
     volumes:
       - ./S3:/S3
   collector-google:
+    image: zhitongliu/msdemo_collector-google
     build: ./micro-services/collector_google
     ports:
       - "4567:4567"
@@ -29,6 +31,7 @@ services:
     volumes:
       - ./S3:/S3
   etl:
+    image: zhitongliu/msdemo_collector-etl
     build: ./micro-services/etl
     ports:
       - "6666:6666"
@@ -37,6 +40,7 @@ services:
     volumes:
       - ./S3:/S3
   sqs:
+    image: zhitongliu/msdemo_sqs
     build: ./SQS
     depends_on:
       - etl
@@ -58,6 +62,7 @@ services:
     volumes:
       - 'postgres:/var/lib/postgresql/data'
   api:
+    image: zhitongliu/msdemo_api
     build: ./api
     entrypoint: [bin/entry]
     environment:
@@ -71,6 +76,7 @@ services:
     networks:
       - services_stack
   supervisor:
+    image: zhitongliu/msdemo_supervisor
     build: ./supervisor
     depends_on:
       - postgres
