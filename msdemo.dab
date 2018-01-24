@@ -1,0 +1,121 @@
+{
+  "Services": {
+    "api": {
+      "Command": [
+        "bin/entry", 
+        "bundle", 
+        "exec", 
+        "rails", 
+        "server"
+      ], 
+      "Env": [
+        "RAILS_ENV=production", 
+        "SECRET_KEY_BASE=bb7d444e7b1250747929168783332de43e6e6279b92e7cfcec7d2ea7027a0965742d1d60a0020ee8b0cfe602791d162c18b5f70f3418dbb40bce72e9b349cb3b"
+      ], 
+      "Image": "zhitongliu/msdemo_api@sha256:0cc8d143705804cf040253c9464d35bd64cb5a1e25a7c87d7f5c78b35bca98ee", 
+      "Networks": [
+        "services_stack"
+      ], 
+      "Ports": [
+        {
+          "Port": 3000, 
+          "Protocol": "tcp"
+        }
+      ]
+    }, 
+    "collector-amazon": {
+      "Env": [
+        "RABBITMQ_HOST=rabbitmq"
+      ], 
+      "Image": "zhitongliu/msdemo_collector-amazon@sha256:da36ae8cdf3ab236200b583f1052e9f7fc3d62f81e5c5ef228c2c6713894af9e", 
+      "Networks": [
+        "services_stack"
+      ]
+    }, 
+    "collector-google": {
+      "Image": "zhitongliu/msdemo_collector-google@sha256:0124c015b581d19c24792028e7e8232543bc4f3e0983c328bdfa7660fd8c471d", 
+      "Networks": [
+        "services_stack"
+      ], 
+      "Ports": [
+        {
+          "Port": 4567, 
+          "Protocol": "tcp"
+        }
+      ]
+    }, 
+    "etl": {
+      "Image": "zhitongliu/msdemo_collector-etl@sha256:8d94844c72ff130956faee815d51b7e52133ba49021ab2705ff86ec6399308d7", 
+      "Networks": [
+        "services_stack"
+      ], 
+      "Ports": [
+        {
+          "Port": 6666, 
+          "Protocol": "tcp"
+        }
+      ]
+    }, 
+    "postgres": {
+      "Env": [
+        "POSTGRES_PASSWORD=password", 
+        "POSTGRES_USER=user"
+      ], 
+      "Image": "postgres@sha256:bf87ee22821e1bc5cedd5da2def1700685a9e3828605b31162d8f04e16c06385", 
+      "Networks": [
+        "services_stack"
+      ], 
+      "Ports": [
+        {
+          "Port": 5432, 
+          "Protocol": "tcp"
+        }
+      ]
+    }, 
+    "rabbitmq": {
+      "Env": [
+        "RABBITMQ_DEFAULT_USER=user", 
+        "RABBITMQ_DEFAULT_PASS=password"
+      ], 
+      "Image": "rabbitmq@sha256:661c09adce41cb4eee57da29fc22d321cfbbd6a01e572fc6b39195f396194275", 
+      "Networks": [
+        "services_stack"
+      ], 
+      "Ports": [
+        {
+          "Port": 5672, 
+          "Protocol": "tcp"
+        }, 
+        {
+          "Port": 15672, 
+          "Protocol": "tcp"
+        }
+      ]
+    }, 
+    "sqs": {
+      "Env": [
+        "ETL_URL=http://etl:6666"
+      ], 
+      "Image": "zhitongliu/msdemo_sqs@sha256:f4054a91c6d3707290a031fc54606b982e15fd678a15bc320c9190537ad76077", 
+      "Networks": [
+        "services_stack"
+      ]
+    }, 
+    "supervisor": {
+      "Args": [
+        "ruby", 
+        "main.rb"
+      ], 
+      "Env": [
+        "DATABASE_HOST=postgres", 
+        "RABBITMQ_HOST=rabbitmq", 
+        "GOOGLE_COLLECTOR_URL=http://collector-google:4567"
+      ], 
+      "Image": "zhitongliu/msdemo_supervisor@sha256:9eab2517f4d80da67e5e629fb66c8d8ea88d877fb02a5b65fe422fc33e0faaf4", 
+      "Networks": [
+        "services_stack"
+      ]
+    }
+  }, 
+  "Version": "0.1"
+}
