@@ -1,22 +1,15 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    mustermann (1.0.1)
-    rack (2.0.3)
-    rack-protection (2.0.0)
-      rack
-    sinatra (2.0.0)
-      mustermann (~> 1.0)
-      rack (~> 2.0)
-      rack-protection (= 2.0.0)
-      tilt (~> 2.0)
-    tilt (2.0.8)
+    amq-protocol (2.3.0)
+    bunny (2.11.0)
+      amq-protocol (~> 2.3.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  sinatra
+  bunny
 
 BUNDLED WITH
-   1.16.0
+   1.16.2
