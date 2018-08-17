@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (10.0.2)
     google-protobuf (3.6.1)
     googleapis-common-protos-types (1.0.2)
       google-protobuf (~> 3.0)
@@ -12,6 +13,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   grpc
 
 BUNDLED WITH

@@ -1,18 +1,18 @@
-FROM ruby:2.3-alpine
+FROM ruby:2.3
 # ENV BUILD_PACKAGES build-base libxml2-dev libxslt-dev
 ENV RUBY_PACKAGES ruby-bundler net-tools
 
-RUN apk update && \
-    apk upgrade && \
-    # apk add $BUILD_PACKAGES && \
-    apk add $RUBY_PACKAGES && \
-    rm -rf /var/cache/apk/*
+RUN apt update -y && \
+    apt upgrade -y && \
+    # apt add $BUILD_PACKAGES && \
+    apt install -y $RUBY_PACKAGES && \
+    rm -rf /var/cache/apt/*
 
 WORKDIR /usr/myapp
 COPY Gemfile Gemfile.lock ./
 RUN bundle
 Add . .
-EXPOSE 4567
+EXPOSE 50051
 
 LABEL maintainer="Zhitong LIU<zhitonggm.liu@gmail.com>"
 

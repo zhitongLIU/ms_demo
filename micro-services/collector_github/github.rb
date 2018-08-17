@@ -1,4 +1,5 @@
 require 'net/https'
+require 'time'
 
 module Github
   def process
@@ -18,6 +19,6 @@ module Github
     end
 
     # save data to S3
-    open("#{Dir.pwd}/../../S3/raw_data/#{Date.today.to_s}_github", 'a') { |file| file << "#{info}" }
+    open("#{Dir.pwd}/../../S3/raw_data/#{::Date.today.to_s}_github", 'a') { |file| file << "#{info}" }
   end
 end
