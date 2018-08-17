@@ -1,6 +1,6 @@
-FROM ruby:2.4-alpine
+FROM ruby:2.4
 
-RUN apk update && apk add build-base postgresql-dev
+RUN apt update -y && apt install -y build-essential libpq-dev
 
 WORKDIR /myapp
 COPY Gemfile Gemfile.lock ./

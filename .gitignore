@@ -1,2 +1,4 @@
 */.bundle
 .bundle
+S3/raw_data/*
+S3/procced_data/*

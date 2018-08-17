@@ -1,6 +1,6 @@
 require 'pg'
 require 'active_record'
-require_relative 'actions/actions'
+require_relative './deps'
 
 host = ENV["DATABASE_HOST"]
 host ||= 'localhost'
@@ -26,6 +26,9 @@ while true do
       job.update(status: 'posted')
     when 'amazon'
       Actions::AmazonCollector.new.run
+      job.update(status: 'posted')
+    when 'github'
+      Actions::GithubCollector.new.run
       job.update(status: 'posted')
     else
       next

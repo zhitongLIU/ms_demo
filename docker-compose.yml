@@ -19,7 +19,7 @@ services:
     networks:
       - services_stack
     volumes:
-      - S3:/S3
+      - ./S3:/S3
   collector-google:
     image: zhitongliu/msdemo_collector-google
     ports:
@@ -27,7 +27,15 @@ services:
     networks:
       - services_stack
     volumes:
-      - S3:/S3
+      - ./S3:/S3
+  collector-github:
+    image: zhitongliu/msdemo_collector-github
+    ports:
+      - "50051:50051"
+    networks:
+      - services_stack
+    volumes:
+      - ./S3:/S3
   etl:
     image: zhitongliu/msdemo_collector-etl
     ports:
@@ -35,7 +43,7 @@ services:
     networks:
       - services_stack
     volumes:
-      - S3:/S3
+      - ./S3:/S3
   sqs:
     image: zhitongliu/msdemo_sqs
     depends_on:
@@ -45,7 +53,7 @@ services:
     networks:
       - services_stack
     volumes:
-      - S3:/S3
+      - ./S3:/S3
   postgres:
     image: 'postgres:9.6-alpine'
     environment:
@@ -77,9 +85,11 @@ services:
       - rabbitmq
       - collector-google
       - collector-amazon
+      - collector-github
     environment:
       DATABASE_HOST: postgres
       GOOGLE_COLLECTOR_URL: http://collector-google:4567
+      GITHUB_COLLECTOR_HOST: collector-github:50051
       RABBITMQ_HOST: rabbitmq
     command: ruby main.rb
     networks:
