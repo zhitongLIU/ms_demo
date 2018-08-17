@@ -1,0 +1,3 @@
+[submodule "ms_demo_protos"]
+	path = ms_demo_protos
+	url = git@github.com:zhitongLIU/ms_demo_protos.git
